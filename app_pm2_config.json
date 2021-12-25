@@ -1,0 +1,22 @@
+{
+    "apps":[
+        {
+            "name": "McrSrvApi",
+            "script": "./app.js",
+            "log_file": "./logs/mcrSrvApi.log",
+            "error_file": "./logs/mcrSrvApi-err.log",
+            "watch": "./",
+            "watch_delay": 500,
+            "ignore_watch": ["node_modules","logs/server.log","logs","server.log","./log", "./node_modules","./.git","./log/*", "*/logs/*"],           
+            "watch_options": {
+                "usePolling": true,
+                "depth": 99,
+                "cwd": ".",
+                "awaitWriteFinish": {
+                    "stabilityThreshold": 1000,
+                    "pollInterval": 100
+                }
+            }
+        }
+    ]
+}

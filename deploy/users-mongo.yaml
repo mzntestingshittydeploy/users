@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-mongo
+spec:
+  ports:
+  - port: 27017
+  selector:
+    app: users-mongo
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-mongo
+spec:
+  selector:
+    matchLabels:
+      app: users-mongo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: users-mongo
+    spec:
+      containers:
+      - image: mongo
+        name: users-mongo
+        env:
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: db
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: db
+        ports:
+        - containerPort: 27017
+          name: users-mongo
+        volumeMounts:
+        - name: users-mongo-persistent-storage
+          mountPath: /var/lib/mongo
+      volumes:
+      - name: users-mongo-persistent-storage
+        persistentVolumeClaim:
+          claimName: users-mongo-pv-claim
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: users-mongo-pv
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: users-mongo-pv-claim
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

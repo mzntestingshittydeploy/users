@@ -1,0 +1,3 @@
+resources:
+  - deploy/users-mongo.yaml
+  - deploy/users-node.yaml
